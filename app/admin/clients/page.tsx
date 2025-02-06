@@ -104,7 +104,7 @@ export default function ClientsPage() {
                       </TableCell>
                       <TableCell>{client.email}</TableCell>
                       <TableCell>
-                        {client.locker_address || "Not Assigned"}
+                        {client.locker_address || "No asignado"}
                       </TableCell>
                       <TableCell>{client.packagesInTransit}</TableCell>
                       <TableCell>

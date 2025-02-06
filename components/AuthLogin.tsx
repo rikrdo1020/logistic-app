@@ -62,10 +62,10 @@ export default function AuthLogin() {
     <form onSubmit={handleLogin}>
       <div className="grid gap-4">
         <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">Correo Electrónico</Label>
           <Input
             id="email"
-            placeholder="name@example.com"
+            placeholder="nombre@ejemplo.com"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -76,7 +76,7 @@ export default function AuthLogin() {
           />
         </div>
         <div className="grid gap-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">Contraseña</Label>
           <Input
             id="password"
             type="password"
@@ -88,7 +88,7 @@ export default function AuthLogin() {
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <Button disabled={isLoading}>
           {isLoading && <Package className="mr-2 h-4 w-4 animate-spin" />}
-          Sign In
+          Iniciar Sesión
         </Button>
       </div>
     </form>

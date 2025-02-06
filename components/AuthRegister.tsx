@@ -109,58 +109,65 @@ export default function AuthRegister() {
 
       <form onSubmit={handleRegister}>
         <div className="grid gap-4">
-          <Label>Email</Label>
+          <Label>Correo Electrónico</Label>
           <Input
             name="email"
             type="email"
+            placeholder="ejemplo@correo.com"
             value={formData.email}
             onChange={handleChange}
           />
 
-          <Label>Password</Label>
+          <Label>Contraseña</Label>
           <Input
             name="password"
             type="password"
+            placeholder="••••••••"
             value={formData.password}
             onChange={handleChange}
           />
 
-          <Label>Name</Label>
+          <Label>Nombre Completo</Label>
           <Input
             name="name"
             type="text"
+            placeholder="Juan Pérez"
             value={formData.name}
             onChange={handleChange}
           />
 
-          <Label>Phone</Label>
+          <Label>Teléfono</Label>
           <Input
             name="phone"
             type="text"
+            placeholder="+58 424-1234567"
             value={formData.phone}
             onChange={handleChange}
           />
 
-          <Label>ID Number</Label>
+          <Label>Número de Identificación</Label>
           <Input
             name="id_number"
             type="text"
+            placeholder="V-12345678"
             value={formData.id_number}
             onChange={handleChange}
           />
 
-          <Label>Birthdate</Label>
+          <Label>Fecha de Nacimiento</Label>
           <Input
             name="birthdate"
             type="date"
+            placeholder="YYYY-MM-DD"
             value={formData.birthdate}
             onChange={handleChange}
           />
 
-          <Label>Branch</Label>
+          <Label>Sucursal</Label>
           <Input
             name="branch"
             type="text"
+            placeholder="Sucursal Principal"
             value={formData.branch}
             onChange={handleChange}
           />
@@ -168,7 +175,7 @@ export default function AuthRegister() {
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <Button disabled={isLoading}>
             {isLoading && <Package className="mr-2 h-4 w-4 animate-spin" />}
-            Create Account
+            Crear Cuenta
           </Button>
         </div>
       </form>

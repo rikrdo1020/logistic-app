@@ -14,7 +14,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-zinc-900" />
         <div className="relative z-20 flex items-center text-lg font-medium">
           <Package className="mr-2 h-6 w-6" />
-          LogisticsPro
+          Dashboard
         </div>
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">

@@ -158,7 +158,11 @@ export default function PackagesPage() {
                                 : "bg-blue-50 text-blue-700 ring-blue-600/20"
                             }`}
                           >
-                            {pkg.status}
+                            {pkg.status === "delivered"
+                              ? "Entregado"
+                              : pkg.status === "in_transit"
+                              ? "En Tránsito"
+                              : "Pendiente"}
                           </span>
                         </TableCell>
                         <TableCell>

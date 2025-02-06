@@ -259,7 +259,13 @@ export default function AdminPackagesPage() {
                 <TableCell>{pkg.tracking_number}</TableCell>
                 <TableCell>{pkg.weight}</TableCell>
                 <TableCell>{pkg.price}</TableCell>
-                <TableCell>{pkg.status}</TableCell>
+                <TableCell>
+                  {pkg.status === "delivered"
+                    ? "Entregado"
+                    : pkg.status === "in_transit"
+                    ? "En Tránsito"
+                    : "Pendiente"}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

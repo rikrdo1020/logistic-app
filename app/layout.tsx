@@ -8,7 +8,7 @@ import { AuthGuard } from "@/components/AuthRedirectGuard";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "LogisticsPro",
+  title: "Sistema de administracion de usuarios",
   description: "Sistema de logística de paquetes",
 };
 

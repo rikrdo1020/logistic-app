@@ -1,10 +1,19 @@
 "use client";
 
-import { Bell, Box, Home, Package, Settings, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase.ts/config/components";
+import {
+  Bell,
+  Box,
+  Home,
+  LogOut,
+  Package,
+  Settings,
+  Users,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import type React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +27,12 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -25,19 +40,71 @@ interface LayoutProps {
 }
 
 export function Layout({ children, isAdmin = false }: LayoutProps) {
-  const pathname = usePathname();
+  const [user, setUser] = useState<{
+    name: string;
+    email: string;
+    avatar_url: string | null;
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const supabase = createClient();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error("Error al cerrar sesión:", error.message);
+      return;
+    }
+
+    // Redirigir al usuario a la página de inicio de sesión
+    window.location.href = "/login";
+  };
+
+  useEffect(() => {
+    async function fetchUser() {
+      setIsLoading(true);
+
+      const { data: userData, error: authError } =
+        await supabase.auth.getUser();
+      if (authError || !userData?.user) {
+        setError("No estás autenticado. Redirigiendo al login...");
+        setTimeout(() => router.push("/login"), 2000);
+        return;
+      }
+
+      // 🔹 Obtener los datos del usuario desde la tabla profiles
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("email, name, avatar_url")
+        .eq("id", userData.user.id)
+        .single();
+
+      if (profileError) {
+        setError("Error al obtener datos del usuario.");
+      } else {
+        setUser(profile);
+      }
+
+      setIsLoading(false);
+    }
+
+    fetchUser();
+  }, [router]);
 
   const clientMenuItems = [
     { href: "/dashboard", icon: Home, label: "Inicio" },
-    { href: "/packages", icon: Package, label: "Mis Paquetes" },
-    { href: "/profile", icon: Users, label: "Perfil" },
+    { href: "/dashboard/packages", icon: Package, label: "Mis Paquetes" },
+    // { href: "/dashboard/profile", icon: Users, label: "Perfil" },
   ];
 
   const adminMenuItems = [
     { href: "/admin", icon: Home, label: "Inicio" },
     { href: "/admin/clients", icon: Users, label: "Clientes" },
     { href: "/admin/packages", icon: Box, label: "Paquetes" },
-    { href: "/admin/settings", icon: Settings, label: "Configuración" },
+    // { href: "/admin/settings", icon: Settings, label: "Configuración" },
   ];
 
   const menuItems = isAdmin ? adminMenuItems : clientMenuItems;
@@ -57,7 +124,7 @@ export function Layout({ children, isAdmin = false }: LayoutProps) {
           <SidebarMenu>
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton asChild isActive={pathname === item.href}>
+                <SidebarMenuButton asChild>
                   <Link href={item.href}>
                     <item.icon className="mr-2 h-4 w-4" />
                     {item.label}
@@ -68,19 +135,39 @@ export function Layout({ children, isAdmin = false }: LayoutProps) {
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter className="border-t p-4">
-          <div className="flex items-center gap-2">
-            <Image
-              alt="Avatar"
-              className="rounded-full"
-              height={32}
-              src="/placeholder.svg"
-              width={32}
-            />
-            <div className="flex flex-col">
-              <span className="text-sm font-medium">Juan Pérez</span>
-              <span className="text-xs text-gray-500">juan@ejemplo.com</span>
-            </div>
-          </div>
+          {isLoading ? (
+            <p className="text-sm text-gray-500">Cargando...</p>
+          ) : error ? (
+            <p className="text-sm text-red-500">{error}</p>
+          ) : user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="flex items-center gap-2 cursor-pointer">
+                  <Image
+                    alt="Avatar"
+                    className="rounded-full"
+                    height={32}
+                    src={user.avatar_url || "/placeholder.svg"}
+                    width={32}
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">
+                      {user.name || "Usuario"}
+                    </span>
+                    <span className="text-xs text-gray-500">{user.email}</span>
+                  </div>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuItem onSelect={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Cerrar Sesión</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <p className="text-sm text-gray-500">Usuario no encontrado</p>
+          )}
         </SidebarFooter>
       </Sidebar>
       <div className="flex-grow flex flex-col flex-1">
